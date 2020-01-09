@@ -11,18 +11,32 @@ class Database
     protected static $_instance;
     private $database;
 
-    public static function getInstance(){
-        if(is_null(self::$_instance)){
-            self::$_instance=new self();
+    /**
+     * Получение инстанса БД
+     * @return Database
+     */
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self();
         }
         return self::$_instance;
     }
 
-    public function setDatabase(EasyDB $easyDB){
-        $this->database=$easyDB;
+    /**
+     * Установка соединения
+     * @param EasyDB $easyDB
+     */
+    public function setConnection(EasyDB $easyDB)
+    {
+        $this->database = $easyDB;
     }
 
-    public function getDatabase():EasyDB
+    /**
+     * Получение соединения
+     * @return EasyDB
+     */
+    public function getConnection(): EasyDB
     {
         return $this->database;
     }
