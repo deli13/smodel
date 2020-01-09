@@ -11,12 +11,15 @@ trait GetModel
      * @param int $id
      * @return static
      */
-    public static function getById(int $id): self
+    public static function getById(int $id): ?self
     {
         $model = new static();
         $get_by_id = $model->connection->row("select * from " . static::TABLE_NAME . " where " . static::ID_FIELD . "=?", $id);
-        $model->loadData($get_by_id);
-        return $model;
+        if(!is_null($get_by_id)){
+            $model->loadData($get_by_id);
+            return $model;
+        }
+        return null;
     }
 
     /**

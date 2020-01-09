@@ -5,11 +5,16 @@ namespace deli13\smodel\database\sorm;
 
 
 use deli13\smodel\database\Database;
+use deli13\smodel\database\errors\FieldException;
+use deli13\smodel\database\errors\ModelLoadException;
+use deli13\smodel\database\errors\ValidationException;
 
 /**
  * Абстрактный класс для ORM
  * Class Model
  * @package App\model\Base
+ * @property string ID_FIELD
+ * @property string TABLE_NAME
  */
 abstract class Model
 {
@@ -20,9 +25,16 @@ abstract class Model
     protected $connection;
     protected $load = false;
 
+    /**
+     * Model constructor.
+     * @throws ModelLoadException
+     */
     public function __construct()
     {
         $this->connection = Database::getInstance()->getConnection();
+        if(empty(static::TABLE_NAME) || empty(static::ID_FIELD)){
+            throw new ModelLoadException("Не указаны название таблицы или поле ID");
+        }
     }
 
     /**
@@ -52,7 +64,7 @@ abstract class Model
             $this->change_field[$name] = $this->field[$name]; //Записываем старое значение
             $this->field[$name] = $value;
         } else if (count($this->field) > 0 && !array_key_exists($name, $this->field) && $this->load) {
-            throw new \ErrorException("Поле $name не найдено");
+            throw new FieldException("Поле $name не найдено");
         } else {
             $this->field[$name] = $value;
         }
@@ -89,7 +101,7 @@ abstract class Model
     private function valid()
     {
         if (count($this->field) == 0) {
-            throw new \ErrorException("Ошибка записи");
+            throw new ValidationException("Ошибка записи");
         }
         return true;
     }
@@ -129,6 +141,4 @@ abstract class Model
         $this->field = null;
         $this->connection = null;
     }
-
-
 }
